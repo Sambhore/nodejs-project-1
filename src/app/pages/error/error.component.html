@@ -1,0 +1,16 @@
+
+<div class="container">
+    <div
+      class="d-flex flex-column justify-content-md-center align-items-center vh-100"
+    >
+      <div *ngIf="data; else elseBlock">
+        <div class="text-center">
+          <h4>{{data?.message}}</h4>
+        </div>
+      </div>
+      <ng-template #elseBlock>
+        <h4>Something Went Wrong!</h4>
+        </ng-template>
+    </div>
+  </div>
+  

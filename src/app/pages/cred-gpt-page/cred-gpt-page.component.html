@@ -1,0 +1,1805 @@
+<app-header [pageName]="pageName"></app-header>
+<div class="container-fluid px-5 pb-5 dashboard" style="margin-top: 175px;" #CredPGTPage>
+    <div class="header" style="padding-left: 32px; padding-bottom: 10px;">
+        <div class="row">
+            <div class="col-11 d-flex flex-row" style="width: 94.66666667%;">
+                <div class="menu-list">
+                    <button class="btn btn-link" (click)="scrollToSection('LoanView')">Loan View</button>
+                    <button class="btn btn-link" (click)="scrollToSection('BankingHealth')">Banking
+                        Health</button>
+                    <!-- <button class="btn btn-link" (click)="scrollToSection('FinancialHealth')">Financial
+                        Health</button> -->
+                    <button class="btn btn-link" (click)="scrollToSection('BureauHealth')">Bureau
+                        Health</button>
+                </div>
+            </div>
+            <div class="col-1 text-center" style="width: 5.33333333%;">
+                <button class="plus-minus" (click)="expandAll($event)">+</button>
+            </div>
+        </div>
+    </div>
+    <div class="row mb-5" id="LoanView">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body px-4 pt-3 pb-4">
+                    <div class="row mb-3">
+                        <div class="text-center lan" [ngStyle]="{'margin-left.px': xData - (xData-5)}">
+                            <span class="worksans-bold fw-bold" style="font-size: 20px;">LOAN AT A GLANCE</span>
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col table-responsive">
+                            <table class="table table-bordered table-striped align-middle">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" class="fw-bold stickyColumn bg-white" style="width: 15%;"></th>
+                                        <th scope="col" class="fw-bold"
+                                            *ngFor="let applicant of applicants;let i = index">
+                                            <ng-container *ngIf="applicant.applicant_type==='mainapp'">
+                                                Main App
+                                            </ng-container>
+                                            <ng-container *ngIf="applicant.applicant_type==='co-app'">
+                                                Co-App {{i}}
+                                            </ng-container>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold stickyColumn bg-white">Name</td>
+                                        <td *ngFor="let applicant of applicants;let i = index">
+                                            {{applicant?.custfname | NA}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold stickyColumn bg-white">Age</td>
+                                        <td *ngFor="let applicant of applicants;let i = index">
+                                            {{applicant?.custdob | age}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold stickyColumn bg-white">DOB/Date of Incorporation</td>
+                                        <td *ngFor="let applicant of applicants;let i = index">
+                                            {{applicant?.custdob | date:'YYYY-MM-dd'}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold stickyColumn bg-white">CIBIL Score</td>
+                                        <td *ngFor="let applicant of applicants;let i = index">
+                                            <ng-container
+                                                *ngIf="applicant.applicant_type == 'co-app'; else elseCibilColor">
+                                                <b [ngStyle]="{'color':getCibilScoreColor(applicant.cibilScore)}">
+                                                    {{applicant.cibilScore}}</b>
+                                            </ng-container>
+                                            <ng-template #elseCibilColor>
+                                                {{applicant.cibilScore}}
+                                            </ng-template>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold stickyColumn bg-white">CRIF Score</td>
+                                        <td *ngFor="let applicant of applicants;let i = index">
+                                            <ng-container *ngIf="applicant.applicant_type == 'co-app'">
+                                                {{applicant.CRIFScore.Score}} / {{applicant.CRIFScore.Category}}
+                                            </ng-container>
+                                            <ng-container *ngIf="applicant.applicant_type == 'mainapp'">
+                                                NA
+                                            </ng-container>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-bordered table-striped align-middle">
+                                <tbody>
+                                    <tr>
+                                        <td class="fw-bold" style="width: 12.5%;">Sector</td>
+                                        <td style="width: 12.5%;">
+                                            {{applicants[0]?.custsector | NA}}
+                                        </td>
+                                        <td class="fw-bold" style="width: 12.5%;">Average Bank Balance (6 M.)</td>
+                                        <td style="width: 12.5%;">
+                                            {{applicantIncomeDetails.BSADetails.MonthlyAverageBankBalancefor6months |
+                                            toNumber | number : '1.2-2'}}
+                                        </td>
+                                        <td class="fw-bold" style="width: 12.5%;">Turnover (Financials)</td>
+                                        <td style="width: 12.5%;">
+                                            {{applicantIncomeDetails.currentYearData.turnoverAsPerFinancials | toNumber
+                                            | number : '1.2-2'}}
+                                        </td>
+                                        <td class="fw-bold">Total Monthly Obligation</td>
+                                        <td>
+                                            {{totalObligation.totalMonthlyObligation | toNumber | number : '1.2-2'}}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Sub Sector</td>
+                                        <td>
+                                            {{applicants[0]?.custsubsector | NA}}
+                                        </td>
+                                        <td class="fw-bold">Nature of Business</td>
+                                        <td>
+                                            {{natureOfBusinessDropDown | NA}}
+                                        </td>
+                                        <td class="fw-bold">Turnover (GST)</td>
+                                        <td>
+                                            {{applicantIncomeDetails.currentYearData.turnoverAsPerGST | toNumber |
+                                            number : '1.2-2'}}
+                                        </td>
+                                        <td style="width: 12.5%;"></td>
+                                        <td style="width: 12.5%;"></td>
+                                    </tr>
+                                    <tr>
+                                        <td class="fw-bold">Segment</td>
+                                        <td>
+                                            {{applicants[0]?.custsegment | NA}}
+                                        </td>
+                                        <td class="fw-bold">Ownership</td>
+                                        <td>
+                                            {{applicants[0]?.addressOwnerShip | NA}}
+                                        </td>
+                                        <td class="fw-bold">PAT</td>
+                                        <td>
+                                            {{applicantIncomeDetails.currentYearData.profitAfterTax | toNumber | number
+                                            : '1.2-2'}}
+                                        </td>
+                                        <td style="width: 12.5%;"></td>
+                                        <td style="width: 12.5%;"></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <!-- <div class="mt-3">
+                        <button class="btn btn-primary me-3" (click)="scrollToSection('BankingHealth')">Banking
+                            Health</button>
+                        <button class="btn btn-primary me-3" (click)="scrollToSection('FinancialHealth')">Financial
+                            Health</button>
+                        <button class="btn btn-primary me-3" (click)="scrollToSection('BureauHealth')">Bureau
+                            Health</button>
+                    </div> -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row application-list mb-5" id="BankingHealth" #BankingHealth>
+        <div class="col-12">
+            <div class="accordion" id="accordionPanelsStayOpen">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingBankingHealth">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseBankingHealth" aria-expanded="false"
+                            aria-controls="panelsStayOpen-collapseBankingHealth">
+                            <b>Banking Health</b>
+                            <img class="float-end arrow"
+                                src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseBankingHealth" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingBankingHealth">
+                        <div class="accordion-body p-0">
+                            <div class="p-4">
+                                <div class="row mb-3 mt-1">
+                                    <div class="col-3">
+                                        <button class="btn btn-primary" (click)="getBSABankingHealth()">Banking
+                                            Health</button>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="Object.keys(bsaBankingHealthDetail).length!==0">
+                                    <div class="hstack applicant-buttons">
+                                        <span class=" me-3">View for : </span>
+                                        <div #applicantsElmBSABankHealth>
+                                            <button class="btn btn-primary me-3">Applicant 1:
+                                                {{applicants[0]?.custfname}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" *ngIf="bsaBankingHealth.length!==0">
+                                    <div class="hstack applicant-buttons">
+                                        <span class="me-3">View for : </span>
+                                        <div #applicantsElmBSABankHealthacc>
+                                            <button class="btn btn-light me-3"
+                                                (click)="switchUserData($event, 4, 'bsaBankHealth')">Summary</button>
+                                            <button class="btn btn-light me-3"
+                                                *ngFor="let account of bsaBankingHealthResult, let i = index;"
+                                                (click)="switchUserData($event, account.accountNum, 'bsaBankHealth')">Bank
+                                                Account {{i + 1}}</button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <ng-container *ngIf="Object.keys(bsaBankingHealthDetail).length!==0">
+                                    <div class="row">
+                                        <div class="col px-4">
+                                            <p class="text-center"><b>Banking Consistency Scorecard</b></p>
+                                            <ng-container *ngIf="bsaBankingHealthDetail.ABB; else elseABB">
+                                                <ng-container
+                                                    *ngIf="Object.keys(bsaBankingHealthDetail.ABB).length!==0; else elseABB">
+                                                    <table class="table table-bordered table-striped align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="text-center" style="width: 20%;">
+                                                                    Customer type</th>
+                                                                <th scope="col" class="text-center">Value</th>
+                                                                <th scope="col" style="width: 32%;"></th>
+                                                                <th scope="col" class="text-center" style="width: 30%;">
+                                                                    Range</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td scope="col" rowspan="6" class="text-center fw-bold"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.abbModelColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.abbModelCustomerType |
+                                                                    NA}}</td>
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2 fw-bold">
+                                                                            {{bsaBankingHealthDetail.ABB?.balConsitencyBreachCount
+                                                                            | NA}}
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="fw-bold text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)}">
+                                                                    Balance Consistency</td>
+                                                                <td scope="col" class="text-center fw-bold"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balConsitencyBreachCountColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.balConsitencyBreachCountMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2">
+                                                                            {{bsaBankingHealthDetail.ABB?.balanceTrendDifference
+                                                                            | NA}} %
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)}">
+                                                                    Balance Trend</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.balanceTrendDifferenceColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.balanceTrendDifferenceMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2">
+                                                                            {{bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCount
+                                                                            | NA}}
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)}">
+                                                                    Credit Balance Consistency</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.CCBalConsistencyThresholdBreachCountMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2">
+                                                                            {{bsaBankingHealthDetail.ABB?.ACCBreachCount
+                                                                            | NA}}
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)}">
+                                                                    Credit Count Consistency</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ACCBreachCountColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.ACCBreachCountMath |
+                                                                    NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2">
+                                                                            {{bsaBankingHealthDetail.ABB?.ADCBreachCount
+                                                                            | NA}}
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)}">
+                                                                    Debit Count Consistency</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.ADCBreachCountColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.ADCBreachCountMath |
+                                                                    NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span class="ms-2">
+                                                                            {{bsaBankingHealthDetail.ABB?.inwardChequeBounceRate
+                                                                            | NA}} %
+                                                                        </span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)}">
+                                                                    Inward Cheque Bounces</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.ABB?.inwardChequeBounceRateColor)}">
+                                                                    {{bsaBankingHealthDetail.ABB?.inwardChequeBounceRateMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #elseABB>
+                                                <table class="table table-bordered table-striped align-middle">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" class="text-center">Customer type</th>
+                                                            <th scope="col" class="text-center">Value</th>
+                                                            <th scope="col"></th>
+                                                            <th scope="col" class="text-center">Range</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td scope="col" rowspan="6" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Balance Consistency</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Balance Trend</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Credit Balance
+                                                                Consistency</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Credit Count Consistency
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Debit Count Consistency
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Inward Cheque Bounces
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col px-4">
+                                            <p class="text-center"><b style="padding-left:8px">Concentration Risk</b>
+                                            </p>
+                                            <ng-container
+                                                *ngIf="bsaBankingHealthDetail.concentrationRisk; else elseConcentrationRisk">
+                                                <ng-container
+                                                    *ngIf="Object.keys(bsaBankingHealthDetail.concentrationRisk).length!==0; else elseConcentrationRisk">
+                                                    <div class="row">
+                                                        <div class="col-6 border-end border-dark border-opacity-25">
+                                                            <p class="text-center fw-bold">Creditor Concentration</p>
+                                                            <ng-container
+                                                                *ngIf="bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationRedFalg">
+                                                                <!-- if red -->
+                                                                <ng-container
+                                                                    *ngFor="let creditor of bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationList;let i = index">
+                                                                    <div class="row mb-2"
+                                                                        *ngIf="getBsaBankHealthColor(creditor.creditorConcentrationColor)==='#df4747'">
+                                                                        <div class="col-2 text-center align-middle">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/cross-circle-red.svg"
+                                                                                style="width:30px">
+                                                                        </div>
+                                                                        <div class="col-10">
+                                                                            <span
+                                                                                [ngStyle]="{'color':getBsaBankHealthColor(creditor.creditorConcentrationColor)}"><b>Creditor
+                                                                                    Concentration Risk</b></span> -
+                                                                            {{creditor.creditorConcentrationParty}}
+                                                                            Creditor Concentration > 25%
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                            <ng-container
+                                                                *ngIf="!bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationRedFalg">
+                                                                <!-- if not red (green) -->
+                                                                <div class="text-center mt-5">
+                                                                    <img class="svgimg"
+                                                                        src="./assets/images/icons/checkmark-circle-green.svg"
+                                                                        style="width: 30%;">
+                                                                </div>
+                                                                <div class="mb-5">
+                                                                    <div class="text-center">
+                                                                        <span
+                                                                            [ngStyle]="{'color':getBsaBankHealthColor('Green')}"><b>No
+                                                                                Creditor Concentration Risk</b></span> -
+                                                                        Creditor Concentration <= 25% </div>
+                                                                    </div>
+                                                            </ng-container>
+                                                        </div>
+                                                        <div class="col-6">
+                                                            <p class="text-center fw-bold">Debtor Concentration</p>
+                                                            <ng-container
+                                                                *ngIf="bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationRedFalg">
+                                                                <!-- if red -->
+                                                                <ng-container
+                                                                    *ngFor="let debtor of bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationList;let i = index">
+                                                                    <div class="row mb-2"
+                                                                        *ngIf="getBsaBankHealthColor(debtor.debtorConcentrationColor)==='#df4747'">
+                                                                        <div class="col-2 text-center">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/cross-circle-red.svg"
+                                                                                style="width:30px">
+                                                                        </div>
+                                                                        <div class="col-10">
+                                                                            <span
+                                                                                [ngStyle]="{'color':getBsaBankHealthColor(debtor.debtorConcentrationColor)}"><b>Debtor
+                                                                                    Concentration Risk</b></span> -
+                                                                            {{debtor.debtorConcentrationParty}} Debtor
+                                                                            Concentration > 25%
+                                                                        </div>
+                                                                    </div>
+                                                                </ng-container>
+                                                            </ng-container>
+                                                            <ng-container
+                                                                *ngIf="!bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationRedFalg">
+                                                                <!-- if not red (green) -->
+                                                                <div class="text-center mt-5">
+                                                                    <img class="svgimg"
+                                                                        src="./assets/images/icons/checkmark-circle-green.svg"
+                                                                        style="width: 30%;">
+                                                                </div>
+                                                                <div class="mb-5">
+                                                                    <div class="text-center">
+                                                                        <span
+                                                                            [ngStyle]="{'color':getBsaBankHealthColor('Green')}"><b>No
+                                                                                Debtor Concentration Risk</b></span> -
+                                                                        Debtor Concentration <= 25% </div>
+                                                                    </div>
+                                                            </ng-container>
+                                                        </div>
+                                                    </div>
+                                                    <!-- <table class="table table-borderless">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col" class="text-center border-end border-dark border-opacity-25" style="width:50%;">Creditor Concentration</th>
+                                                                    <th scope="col" class="text-center" style="width:50%;">Debtor Concentration</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr>
+                                                                    <td scope="col" class="text-center border-end border-dark border-opacity-25">
+                                                                        green
+                                                                        <ng-container *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationColor)==='#83C775'">
+                                                                            <img class="svgimg" src="./assets/images/icons/checkmark-circle-green.svg" style="width: 30%;">
+                                                                        </ng-container>
+
+                                                                        red
+                                                                        <ng-container *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationColor)==='#df4747'">
+                                                                            <img class="svgimg" src="./assets/images/icons/cross-circle-red.svg" style="width: 30%;">
+                                                                        </ng-container>
+                                                                    </td>
+                                                                    <td scope="col" class="text-center">
+                                                                        green
+                                                                        <ng-container *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationColor)==='#83C775'">
+                                                                            <img class="svgimg" src="./assets/images/icons/checkmark-circle-green.svg" style="width: 30%;">
+                                                                        </ng-container>
+
+                                                                        red
+                                                                        <ng-container *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationColor)==='#df4747'">
+                                                                            <img class="svgimg" src="./assets/images/icons/cross-circle-red.svg" style="width: 30%;">
+                                                                        </ng-container>
+                                                                    </td>
+                                                                </tr>
+                                                                <tr>
+                                                                    <td scope="col" class="text-center border-end border-dark border-opacity-25">
+                                                                        green
+                                                                        <ng-container *ngIf="bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationValue<=25">
+                                                                            <span [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationColor)}"><b>No Creditor Concentration Risk</b></span> - Creditor Concentration <= 25%
+                                                                        </ng-container>
+
+                                                                        red
+                                                                        <ng-container *ngIf="bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationValue>25">
+                                                                            <span [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationColor)}"><b>Creditor Concentration Risk</b></span> - {{bsaBankingHealthDetail.concentrationRisk?.creditorConcentrationParty}} Creditor Concentration > 25%
+                                                                        </ng-container>
+
+                                                                    </td>
+                                                                    <td scope="col" class="text-center">
+                                                                        green
+                                                                        <ng-container *ngIf="bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationValue<=25">
+                                                                            <span [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationColor)}"><b>No Debtor Concentration Risk</b></span> - Debtor Concentration <= 25%
+                                                                        </ng-container>
+
+
+                                                                        red
+                                                                        <ng-container *ngIf="bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationValue>25">
+                                                                            <span [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationColor)}"><b>Debtor Concentration Risk</b></span> - {{bsaBankingHealthDetail.concentrationRisk?.debtorConcentrationParty}} Creditor Concentration > 25%
+                                                                        </ng-container>
+
+                                                                    </td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table> -->
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #elseConcentrationRisk>
+                                                <table class="table table-borderless">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col"
+                                                                class="text-center border-end border-dark border-opacity-25"
+                                                                style="width:50%;">Creditor Concentration</th>
+                                                            <th scope="col" class="text-center" style="width:50%;">
+                                                                Debtor Concentration</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td scope="col"
+                                                                class="text-center border-end border-dark border-opacity-25">
+                                                                <span><b>NA</b></span>
+                                                            </td>
+                                                            <td scope="col" class="text-center">
+                                                                <span><b>NA</b></span>
+                                                            </td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                    <div class="row mt-4">
+                                        <div class="col px-4">
+                                            <p class="text-center"><b>Transaction Analytics</b></p>
+                                            <ng-container
+                                                *ngIf="bsaBankingHealthDetail.transactionAnalytics; else elseTransactionAnalytics">
+                                                <ng-container
+                                                    *ngIf="Object.keys(bsaBankingHealthDetail.transactionAnalytics).length!==0; else elseTransactionAnalytics">
+                                                    <table class="table table-bordered table-striped align-middle"
+                                                        style="height:80%;">
+                                                        <thead>
+                                                            <tr>
+                                                                <th colspan="2" class="text-center">Segments</th>
+                                                                <th scope="col" class="text-center">Amount (In Lakhs)
+                                                                </th>
+                                                                <th scope="col" class="text-center">Amount %</th>
+                                                                <th scope="col" class="text-center">Count</th>
+                                                                <th scope="col" class="text-center">Count %</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td scope="col" rowspan="2" class="text-center">Self &
+                                                                    Related Party</td>
+                                                                <td scope="col" class="text-center">Credit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyCreditAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyCreditAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyCreditCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyCreditCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" class="text-center">Debit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyDebitAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyDebitAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyDebitCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.selfRelatedPartyDebitCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" rowspan="2" class="text-center">High
+                                                                    Value</td>
+                                                                <td scope="col" class="text-center">Credit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsCreditAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsCreditAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsCreditCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsCreditCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" class="text-center">Debit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsDebitAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsDebitAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsDebitCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.highValueXnsDebitCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" rowspan="2" class="text-center">Non
+                                                                    Trade</td>
+                                                                <td scope="col" class="text-center">Credit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsCreditAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsCreditAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsCreditCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsCreditCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" class="text-center">Debit</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsDebitAmount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsDebitAmountPercent
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsDebitCount
+                                                                    | NA}}</td>
+                                                                <td scope="col" class="text-center">
+                                                                    {{bsaBankingHealthDetail.transactionAnalytics?.nonTradeXnsDebitCountPercent
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" class="text-center">Circular</td>
+                                                                <td scope="col" class="text-center">Total</td>
+                                                                <td scope="col" class="text-center">
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.circularXnsAmount">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.circularXnsAmount
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsAmount">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsAmount
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                </td>
+                                                                <td scope="col" class="text-center">
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.circularXnsAmountPercent">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.circularXnsAmountPercent
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsAmountPercent">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsAmountPercent
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                </td>
+                                                                <td scope="col" class="text-center">
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.circularXnsCount">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.circularXnsCount
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsCount">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.ccircularXnsCount
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                </td>
+                                                                <td scope="col" class="text-center">
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.circularXnsCountPercent">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.circularXnsCountPercent
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                    <ng-container
+                                                                        *ngIf="bsaBankingHealthDetail.transactionAnalytics?.finalCircularXnsCountPercent">
+                                                                        {{bsaBankingHealthDetail.transactionAnalytics?.finalCircularXnsCountPercent
+                                                                        | NA}}
+                                                                    </ng-container>
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #elseTransactionAnalytics>
+                                                <table class="table table-bordered table-striped align-middle"
+                                                    style="height:80%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" class="text-center">Segments</th>
+                                                            <th scope="col" class="text-center"
+                                                                style="border-left:none"></th>
+                                                            <th scope="col" class="text-center">Amount (In Lakhs)</th>
+                                                            <th scope="col" class="text-center">Amount %</th>
+                                                            <th scope="col" class="text-center">Count</th>
+                                                            <th scope="col" class="text-center">Count %</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td scope="col" rowspan="2" class="text-center">Self &
+                                                                Related Party</td>
+                                                            <td scope="col" class="text-center">Credit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">Debit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" rowspan="2" class="text-center">High Value
+                                                            </td>
+                                                            <td scope="col" class="text-center">Credit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">Debit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" rowspan="2" class="text-center">Non Trade
+                                                            </td>
+                                                            <td scope="col" class="text-center">Credit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">Debit</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">Circular</td>
+                                                            <td scope="col" class="text-center">Total</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </ng-template>
+                                        </div>
+                                        <div class="col px-4">
+                                            <p class="text-center"><b>Poor Banking Behaviour</b></p>
+                                            <ng-container *ngIf="bsaBankingHealthDetail.PBB; else elsePBB">
+                                                <ng-container
+                                                    *ngIf="Object.keys(bsaBankingHealthDetail.PBB).length!==0; else elsePBB">
+                                                    <table class="table table-bordered table-striped align-middle">
+                                                        <thead>
+                                                            <tr>
+                                                                <th scope="col" class="text-center" style="width: 28%;">
+                                                                    Triggers</th>
+                                                                <th scope="col" class="text-center">Value</th>
+                                                                <th scope="col" style="width: 30%;"></th>
+                                                                <th scope="col" class="text-center">Range</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody>
+                                                            <tr>
+                                                                <td scope="col" rowspan="5" class="text-center">Poor
+                                                                    Banking Behaviour</td>
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2 fw-bold">{{bsaBankingHealthDetail.PBB?.abbRate
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="fw-bold text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)}">
+                                                                    ABB / EMI</td>
+                                                                <td scope="col" class="text-center fw-bold"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.abbRateColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.abbRateMath | NA}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.inwardChqBncRate
+                                                                            | NA}} %</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)}">
+                                                                    Inward Cheque Bounces</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.inwardChqBncRateColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.inwardChqBncRateMath |
+                                                                    NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.bounceCount
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)}">
+                                                                    EMI Bounce</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.bounceCountColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.bounceCountMath | NA}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.avgUtilization
+                                                                            | NA}} %</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)}">
+                                                                    Avg. Limit Utilisation</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.avgUtilizationColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.avgUtilizationMath |
+                                                                    NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.overDrawnCount
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)}">
+                                                                    Overdrawn</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.overDrawnCountColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.overDrawnCountMath |
+                                                                    NA}}</td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td scope="col" rowspan="5" class="text-center">General
+                                                                </td>
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2 fw-bold">{{bsaBankingHealthDetail.PBB?.cashDepositToCredit
+                                                                            | NA}} %</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="fw-bold text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)}">
+                                                                    Cash Deposit/Credits</td>
+                                                                <td scope="col" class="text-center fw-bold"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.cashDepositToCreditColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.cashDepositToCreditMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.penalChargesCount
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)}">
+                                                                    Penal Charges</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.penalChargesCountColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.penalChargesCountMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.businessCreditCount
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)}">
+                                                                    Business Credits</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessCreditCountColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.businessCreditCountMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                            <tr class="fw-bold">
+                                                                <td scope="col"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)}">
+                                                                    <div class="d-flex align-items-center"
+                                                                        style="padding-left:20%;">
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)==='#FFDE17'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/empty-circle-amber.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)==='#83C775'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/plus-circle-green.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <ng-container
+                                                                            *ngIf="getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)==='#df4747'">
+                                                                            <img class="svgimg"
+                                                                                src="./assets/images/icons/minus-circle-red.svg"
+                                                                                style="width: 18px;">
+                                                                        </ng-container>
+                                                                        <span
+                                                                            class="ms-2">{{bsaBankingHealthDetail.PBB?.businessDebitCount
+                                                                            | NA}}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)}">
+                                                                    Business Debits</td>
+                                                                <td scope="col" class="text-center"
+                                                                    [ngStyle]="{'color':getBsaBankHealthColor(bsaBankingHealthDetail.PBB?.businessDebitCountColor)}">
+                                                                    {{bsaBankingHealthDetail.PBB?.businessDebitCountMath
+                                                                    | NA}}</td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </ng-container>
+                                            </ng-container>
+                                            <ng-template #elsePBB>
+                                                <table class="table table-bordered table-striped align-middle">
+                                                    <thead>
+                                                        <tr>
+                                                            <th scope="col" class="text-center">Triggers</th>
+                                                            <th scope="col" class="text-center">Value</th>
+                                                            <th scope="col"></th>
+                                                            <th scope="col" class="text-center">Range</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        <tr>
+                                                            <td scope="col" rowspan="5" class="text-center">Poor Banking
+                                                                Behaviour</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">ABB / EMI</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Inward Cheque Bounces
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">EMI Bounce</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Avg. Limit Utilisation
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Overdrawn</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" rowspan="5" class="text-center">General</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Cash Deposit/Credits
+                                                            </td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Penal Charges</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Business Credits</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                            <td scope="col" class="text-center">Business Debits</td>
+                                                            <td scope="col" class="text-center">NA</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </ng-template>
+                                        </div>
+                                    </div>
+                                </ng-container>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row application-list" id="BureauHealth" #BureauHealth>
+        <div class="col-12">
+            <div class="accordion" id="accordionPanelsStayOpen">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingBureauHealth">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseBureauHealth" aria-expanded="false"
+                            aria-controls="panelsStayOpen-collapseBureauHealth">
+                            <b>Bureau Health</b>
+                            <img class="float-end arrow"
+                                src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseBureauHealth" class="accordion-collapse collapse"
+                        aria-labelledby="panelsStayOpen-headingBureauHealth">
+                        <div class="accordion-body p-0">
+                            <div class="p-4">
+                                <!-- <ng-container>
+                                        <ng-container> -->
+                                <div class="row ">
+                                    <div class="hstack applicant-buttons"> <button class="btn btn-primary me-3"
+                                            (click)="getConsumerBureauAnalyticsDetails()">
+                                            Bureau Health
+                                        </button></div>
+                                    <div class="hstack applicant-buttons" *ngIf="ConsumerBureauAnalyticsView">
+                                        <span class=" me-3">View for : </span>
+                                        <div #applicantsConsumerBureauAnalytics>
+                                            <button class="btn btn-primary me-3"
+                                                *ngFor="let user of coApplicantUserList, let i = index;"
+                                                (click)="getCoApplicantWiseConsumerBureauAnalyticsDetails($event,user)">
+                                                Bureau Health for Co-Applicant {{i + 1}}: {{user.name}}
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- Consumer Bureau Analytics View Start-->
+                                <div class="row" *ngIf="ConsumerBureauAnalyticsView">
+                                    <div class="col-md-6">
+                                        <!--Table for Consumer Bureau Summary Start-->
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Variables</th>
+                                                    <th scope="col" class="text-center">Non Credit Card</th>
+                                                    <th scope="col" class="text-center">Credit Card</th>
+                                                    <th scope="col" class="text-center">Overall</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td scope="col">Number of accounts live</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.noOfActiveNonCCAcct?
+                                                        ConsumerBureauAnalytics.noOfActiveNonCCAcct : 'NA'}}</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.noOfActiveCCAcct?
+                                                        ConsumerBureauAnalytics.noOfActiveCCAcct : 'NA'}}</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNoOfActiveAcct?
+                                                        ConsumerBureauAnalytics.totalNoOfActiveAcct : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of accounts closed</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.noOfClosedNonCCAcct?
+                                                        ConsumerBureauAnalytics.noOfClosedNonCCAcct : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.noOfClosedCCAcct?
+                                                        ConsumerBureauAnalytics.noOfClosedCCAcct : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNoOfClosedAcct?
+                                                        ConsumerBureauAnalytics.totalNoOfClosedAcct : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Total outstanding</td>
+                                                    <td *ngIf="ConsumerBureauAnalytics.totalNonCCOutstanding"
+                                                        scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNonCCOutstanding?
+                                                        ConsumerBureauAnalytics.totalNonCCOutstanding : 'NA'}}</td>
+
+                                                    <td *ngIf="ConsumerBureauAnalytics.totalCCOutstanding" scope="col"
+                                                        class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalCCOutstanding?
+                                                        ConsumerBureauAnalytics.totalCCOutstanding : 'NA'}}</td>
+
+                                                    <td *ngIf="ConsumerBureauAnalytics.totalOutstanding" scope="col"
+                                                        class="text-center">{{ConsumerBureauAnalytics.totalOutstanding?
+                                                        ConsumerBureauAnalytics.totalOutstanding : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Total overdue amount</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNonCCOverdueAmt?
+                                                        ConsumerBureauAnalytics.totalNonCCOverdueAmt : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalCCOverdueAmt?
+                                                        ConsumerBureauAnalytics.totalCCOverdueAmt : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalOverdueAmt?
+                                                        ConsumerBureauAnalytics.totalOverdueAmt : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries last 7 days</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numNonCCEnqLast7Days?
+                                                        ConsumerBureauAnalytics.numNonCCEnqLast7Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numCCEnqLast7Days?
+                                                        ConsumerBureauAnalytics.numCCEnqLast7Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast7Days?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast7Days : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries last 30 days</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numNonCCEnqLast30Days?
+                                                        ConsumerBureauAnalytics.numNonCCEnqLast30Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numCCEnqLast30Days?
+                                                        ConsumerBureauAnalytics.numCCEnqLast30Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast30Days?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast30Days : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries last 90 days</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numNonCCEnqLast90Days?
+                                                        ConsumerBureauAnalytics.numNonCCEnqLast90Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numCCEnqLast90Days?
+                                                        ConsumerBureauAnalytics.numCCEnqLast90Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast90Days?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast90Days : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries last 180 days</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numNonCCEnqLast180Days?
+                                                        ConsumerBureauAnalytics.numNonCCEnqLast180Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numCCEnqLast180Days?
+                                                        ConsumerBureauAnalytics.numCCEnqLast180Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast180Days?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast180Days : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries last 360 days</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numNonCCEnqLast360Days?
+                                                        ConsumerBureauAnalytics.numNonCCEnqLast360Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.numCCEnqLast360Days?
+                                                        ConsumerBureauAnalytics.numCCEnqLast360Days : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast360Days?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast360Days : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of 30+ accounts last 24 months</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.countOf30PlusNonCCAcctLast24m?
+                                                        ConsumerBureauAnalytics.countOf30PlusNonCCAcctLast24m : 'NA'}}
+                                                    </td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.countOf30PlusCCAcctLast24m?
+                                                        ConsumerBureauAnalytics.countOf30PlusCCAcctLast24m : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalCountOf30PlusLast24m?
+                                                        ConsumerBureauAnalytics.totalCountOf30PlusLast24m : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Value of 30+ accounts last 24 months</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.sumOf30PlusNonCCAcctLast24m?
+                                                        ConsumerBureauAnalytics.sumOf30PlusNonCCAcctLast24m : 'NA'}}
+                                                    </td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.sumOf30PlusCCAcctLast24m?
+                                                        ConsumerBureauAnalytics.sumOf30PlusCCAcctLast24m : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalSumOf30PlusLast24m?
+                                                        ConsumerBureauAnalytics.totalSumOf30PlusLast24m : 'NA'}}</td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of accounts written-off or settled</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.countOfwrittenOff_SettledNonCC?
+                                                        ConsumerBureauAnalytics.countOfwrittenOff_SettledNonCC : 'NA'}}
+                                                    </td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.countOfwrittenOff_SettledCC?
+                                                        ConsumerBureauAnalytics.countOfwrittenOff_SettledCC : 'NA'}}
+                                                    </td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.totalCountwrittenOff_Settled?
+                                                        ConsumerBureauAnalytics.totalCountwrittenOff_Settled : 'NA'}}
+                                                    </td>
+
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Value of accounts written-off or settled</td>
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.blcOfwrittenOff_SettledNonCC?
+                                                        ConsumerBureauAnalytics.blcOfwrittenOff_SettledNonCC : 'NA'}}
+                                                    </td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.blcOfwrittenOff_SettledCC?
+                                                        ConsumerBureauAnalytics.blcOfwrittenOff_SettledCC : 'NA'}}</td>
+
+                                                    <td scope="col" class="text-center">
+                                                        {{ConsumerBureauAnalytics.BlcOfwrittenOff_Settled?
+                                                        ConsumerBureauAnalytics.BlcOfwrittenOff_Settled : 'NA'}}</td>
+
+                                                </tr>
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <!--Table for Consumer Bureau Summary Start-->
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Variables</th>
+                                                    <th scope="col" class="text-center">Non Credit Card</th>
+                                                    <th scope="col" class="text-center">Credit Card</th>
+
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td scope="col">Overdue amount</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalNonCCOverdueAmtColor)}">
+                                                        {{ConsumerBureauAnalytics.totalNonCCOverdueAmt?
+                                                        ConsumerBureauAnalytics.totalNonCCOverdueAmt : 'NA'}}</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalCCOverdueAmtColor)}">
+                                                        {{ConsumerBureauAnalytics.totalCCOverdueAmt?
+                                                        ConsumerBureauAnalytics.totalCCOverdueAmt : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Max. DPD in 24 months </td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.maxDPD24Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.maxDPD24Months_NonCC?
+                                                        ConsumerBureauAnalytics.maxDPD24Months_NonCC : 'NA'}}</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.maxDPD24Months_CCColor)}">
+                                                        {{ConsumerBureauAnalytics.maxDPD24Months_CC?
+                                                        ConsumerBureauAnalytics.maxDPD24Months_CC : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Max. DPD beyond 24 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.maxDPDBeyond24Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.maxDPDBeyond24Months_NonCC?
+                                                        ConsumerBureauAnalytics.maxDPDBeyond24Months_NonCC : 'NA'}}</td>
+                                                    <td scope="col" class="text-center">NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Written-off or settled within 24 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.writtenOffSettledWithin24Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.writtenOffSettledWithin24Months_NonCC?
+                                                        ConsumerBureauAnalytics.writtenOffSettledWithin24Months_NonCC :
+                                                        'NA'}}</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.writtenOffSettledWithin24Months_CCColor)}">
+                                                        {{ConsumerBureauAnalytics.writtenOffSettledWithin24Months_CC?
+                                                        ConsumerBureauAnalytics.writtenOffSettledWithin24Months_CC :
+                                                        'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Written-off or settled beyond 24 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_NonCC?
+                                                        ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_NonCC :
+                                                        'NA'}}</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_CCColor)}">
+                                                        {{ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_CC?
+                                                        ConsumerBureauAnalytics.writtenOffSettledBeyond24Months_CC :
+                                                        'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Current utilisation on live accounts</td>
+                                                    <td scope="col" class="text-center">NA</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.currUtilisationLiveAcct_CCColor)}">
+                                                        {{ConsumerBureauAnalytics.currUtilisationLiveAcct_CC?
+                                                        ConsumerBureauAnalytics.currUtilisationLiveAcct_CC : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Avg. current utilisation on live accounts</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.avgCurrUtilisationLiveAcct_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.avgCurrUtilisationLiveAcct_NonCC?
+                                                        ConsumerBureauAnalytics.avgCurrUtilisationLiveAcct_NonCC :
+                                                        'NA'}}</td>
+                                                    <td scope="col" class="text-center">NA</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of accounts opened in last 12 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.acctOpenedLast12Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.acctOpenedLast12Months_NonCC?
+                                                        ConsumerBureauAnalytics.acctOpenedLast12Months_NonCC : 'NA'}}
+                                                    </td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.acctOpenedLast12Months_CCColor)}">
+                                                        {{ConsumerBureauAnalytics.acctOpenedLast12Months_CC?
+                                                        ConsumerBureauAnalytics.acctOpenedLast12Months_CC : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of non CC accounts opened in last 12 months
+                                                        and currently active </td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.acctOpenedLast12Months_NonCCColor)}">
+                                                        {{ConsumerBureauAnalytics.acctOpenedLast12Months_NonCC?
+                                                        ConsumerBureauAnalytics.acctOpenedLast12Months_NonCC : 'NA'}}
+                                                    </td>
+                                                    <td scope="col" class="text-center">NA</td>
+
+                                                </tr>
+
+
+                                            </tbody>
+                                        </table>
+
+                                        <!--  Overall table-->
+                                        <!--Table for Consumer Bureau Summary Start-->
+                                        <table class="table table-bordered table-striped">
+                                            <thead>
+                                                <tr>
+                                                    <th scope="col">Variables</th>
+                                                    <th scope="col" class="text-center">Overall</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <td scope="col">Max. delinquency in life</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalMaxDelinquencyInlifeColor)}">
+                                                        {{ConsumerBureauAnalytics.totalMaxDelinquencyInlife?
+                                                        ConsumerBureauAnalytics.totalMaxDelinquencyInlife : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">CIBIL Score</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalCibilScoreColor)}">
+                                                        {{ConsumerBureauAnalytics.totalCibilScore?
+                                                        ConsumerBureauAnalytics.totalCibilScore : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Avg. current utilisation on all live accounts</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalAvgCurrUtilisationLiveAcctColor)}">
+                                                        {{ConsumerBureauAnalytics.totalAvgCurrUtilisationLiveAcct?
+                                                        ConsumerBureauAnalytics.totalAvgCurrUtilisationLiveAcct : 'NA'}}
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries in last 6 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.noOfEnqInL6mColor)}">
+                                                        {{ConsumerBureauAnalytics.noOfEnqInL6m?
+                                                        ConsumerBureauAnalytics.noOfEnqInL6m : 'NA'}}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td scope="col">Number of enquiries in last 12 months</td>
+                                                    <td scope="col" class="text-center"
+                                                        [ngStyle]="{'background-color':getColorForConsumerBureauAnalytics(ConsumerBureauAnalytics.totalNumEnqLast12MonthsColor)}">
+                                                        {{ConsumerBureauAnalytics.totalNumEnqLast12Months?
+                                                        ConsumerBureauAnalytics.totalNumEnqLast12Months : 'NA'}}</td>
+                                                </tr>
+
+
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                                <!-- Consumer Bureau Analytics View End-->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="position-fixed bottom-0 end-0">
+        <div class="personal-icons me-0 ms-auto">
+            <img src="./assets/images/icons/Path%20367.svg" (click)="scrollToTop()">
+        </div>
+    </div>
+</div>
+
+<div id="backdrop" [ngClass]="{'d-none': !loader}">
+    <div class="text-center loading">
+        <div class="spinner-border" role="status" style="width: 5rem; height: 5rem;">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>

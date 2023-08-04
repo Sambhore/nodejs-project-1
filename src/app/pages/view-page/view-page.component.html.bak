@@ -1,0 +1,1809 @@
+<app-header [pageName]="pageName"></app-header>
+<div class="container-fluid p-5">
+    <div class="row application-list mb-5">
+        <div class="col-12">
+            <div class="accordion" id="accordionPanelsStayOpen">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="false"
+                            aria-controls="panelsStayOpen-collapseOne">
+                            <b>Applicants : {{applicants.length}}</b>
+                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse overflow-auto"
+                        aria-labelledby="panelsStayOpen-headingOne">
+                        <div class="accordion-body d-table" #applicantsElm>
+                            <div class="d-table-row">
+                                <div class="card applicant-card d-table-cell" (click)="getApplicantDetails($event, applicant)" *ngFor="let applicant of applicants;let i = index">
+                                    <div class="card-body">
+                                        <h4>Application {{i + 1}}</h4>
+                                        <div class="row">
+                                            <div class="col">Name</div>
+                                            <div class="col text-end fw-bold">{{applicant.custfname}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">Category</div>
+                                            <div class="col text-end fw-bold">{{applicant.fincategory}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">Segment</div>
+                                            <div class="col text-end fw-bold">{{applicant.custsegment}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">Loan Amount</div>
+                                            <div class="col text-end fw-bold">{{applicant.finamount}}</div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col">Product</div>
+                                            <div class="col text-end fw-bold">{{applicant.fintype}}</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row application-details mb-5">
+        <div class="col-12">
+            <div class="accordion" id="accordionPanelsStayOpen">
+                <div class="accordion-item">
+                    <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false"
+                            aria-controls="panelsStayOpen-collapseTwo">
+                            <b>Triggered Services</b>
+                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                        </button>
+                    </h2>
+                    <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse "
+                        aria-labelledby="panelsStayOpen-headingTwo">
+                        <div class="accordion-body">
+                            <div class="service-wrapper row row-cols-5">
+                                <div class="col service-block border-end align-self-start" *ngFor="let service of applicantDetails;">
+                                    <div class="service">
+                                        <h4>{{service.key}}</h4>
+                                        <div class="service-item row g-0" *ngFor="let detail of service.values;">
+                                            <div class="col-auto align-self-start">
+                                                <span class="circle" [ngClass]="{'tick': detail.status == 'Ready' || detail.status == 'PENDING', 'deactive': detail.status === 'deactive'}">✔</span>
+                                            </div>
+                                            <div class="col-auto doc-name">
+                                                <b>{{detail.name}}</b><br>
+                                                <span>{{detail.date}}</span>
+                                            </div>
+                                            <div class="col status">
+                                                <span class="badge rounded-pill text-bg-{{detail.status}} float-end">{{detail.status}}</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="hstack gap-5 services-available">
+        <div class="align-self-start col-5" #setvicesAvailable>
+            <div class="card">
+                <div class="card-body">
+                    <div class="header">
+                        <h1>Services Available</h1>
+                        <button class="expand-btn float-end" (click)="expandAll($event, 'setvicesAvailable')">Expand All</button>
+                        <p>
+                            Please select all the API checks required for this case from below list
+                        </p>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row row-cols-2">
+                            <div class="col mb-4" *ngFor="let service of services;">
+                                <div class="accordion" id="accordionPanelsStayOpen">
+                                    <div class="accordion-item">
+                                        <h2 class="accordion-header" id="panelsStayOpen-heading{{service.key | removeSpaces}}">
+                                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                                attr.data-bs-target="#panelsStayOpen-collapse{{service.key | removeSpaces}}" aria-expanded="false"
+                                                attr.aria-controls="panelsStayOpen-collapse{{service.key | removeSpaces}}">
+                                                {{service.key}}
+                                                <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                            </button>
+                                        </h2>
+                                        <div attr.id="panelsStayOpen-collapse{{service.key | removeSpaces}}" class="accordion-collapse collapse "
+                                            attr.aria-labelledby="panelsStayOpen-heading{{service.key | removeSpaces}}">
+                                            <div class="accordion-body">
+                                                <div class="form-check" *ngFor="let check of service.values;">
+                                                    <input class="form-check-input" type="checkbox" (change)="onServiceSelect($event)" value="{{check.id}}" id="{{check.id}}" [checked]="check.status == 'ready' || check.status == 'PENDING'" [disabled]="apiDetails[check.id].disabled">
+                                                    <label class="form-check-label" for="{{check.id}}">
+                                                        {{check.name}}
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="">
+            <div class="d-flex" style="height: 500px;">
+                <div class="vr"></div>
+            </div>
+        </div>    
+        <div class="align-self-start col-5 submit-to-api" #SubmitDocuments>
+            <div class="card">
+                <div class="card-body">
+                    
+                    <div class="header clearfix mb-3">
+                        <button class="expand-btn float-end submit-btn" [ngClass]="{'active' : submitButton}" [disabled]="!submitButton" (click)="submitForm()">Submit for API</button>
+                        <h1>Submit Documents</h1>
+                        <p>
+                            Please add all required fields below to process services,
+                        </p>
+                        <button class="expand-btn float-end" (click)="expandAll($event, 'SubmitDocuments')">Expand All</button>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['1'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingPanCard">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapsePanCard" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapsePanCard">
+                                            Pan Card
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapsePanCard" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingPanCard">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="pan_card_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['1'].error">
+                                                            {{apiDetails['1'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Pan Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="pan" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Name<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="name" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Date of Birth<span class="float-end">(required)</span></p>
+                                                        <input type="date" formControlName="dob" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['24'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingAdharxml">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseAdharxml" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseAdharxml">
+                                            Adhar XML
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseAdharxml" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingAdharxml">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="aadhar_xml_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['24'].error">
+                                                            {{apiDetails['24'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">File 1 <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="file1" hidden (change)="onFileChange($event, 'aadhar_xml_form')" />
+                                                        <label for="file1" class="text-center"><img src="./assets/images/icons/Icon ionic-ios-cloud-upload.svg"> Click to Select File</label>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <div class="uploaded-file">
+                                                            <p>
+                                                                <img src="./assets/images/icons/Icon material-attach-file.svg">
+                                                                Uploaded File
+                                                                <img src="./assets/images/icons/Icon ionic-ios-close.svg" class="float-end">
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Image <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="image" hidden (change)="onFileChange($event, 'aadhar_xml_form')" />
+                                                        <label for="image" class="text-center"><img src="./assets/images/icons/Icon material-attach-file.svg"> Click to Select File</label>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <div class="uploaded-file">
+                                                            <p>
+                                                                <img src="./assets/images/icons/Icon material-attach-file.svg">
+                                                                Uploaded File
+                                                                <img src="./assets/images/icons/Icon ionic-ios-close.svg" class="float-end">
+                                                            </p>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Share Code<span></span></p>
+                                                        <input type="input" formControlName="shareCode" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Date of Birth<span></span></p>
+                                                        <input type="input" formControlName="dob" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Name<span></span></p>
+                                                        <input type="input" formControlName="name" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Address<span></span></p>
+                                                        <input type="input" formControlName="address" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Mobile<span></span></p>
+                                                        <input type="input" formControlName="mobile" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">email<span></span></p>
+                                                        <input type="input" formControlName="email" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['3'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingPassport">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapsePassport" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapsePassport">
+                                            Passport
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapsePassport" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingPassport">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="passport_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['3'].error">
+                                                            {{apiDetails['3'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">File Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="fileNo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Passport Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="passportNo" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Name<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="name" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Date of Issue<span class="float-end">(required)</span></p>
+                                                        <input type="date" formControlName="doi" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Date of Birth<span class="float-end">(required)</span></p>
+                                                        <input type="date" formControlName="dob" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['4'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingDriversLicence">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseDriversLicence" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseDriversLicence">
+                                            Drivers Licence
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseDriversLicence" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingDriversLicence">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="driving_lincence_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['4'].error">
+                                                            {{apiDetails['4'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Driving Licence Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="dlNo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Date of Birth<span class="float-end">(required)</span></p>
+                                                        <input type="date" formControlName="dob" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['5'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingVoterId">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseVoterId" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseVoterId">
+                                            Voter Id
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseVoterId" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingVoterId">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="voterid_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['5'].error">
+                                                            {{apiDetails['5'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">EPIC Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="epicNo" class="form-control"/>
+                                                    </div>
+                                                    <!-- <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_voterid" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'voterid_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_voterid">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['22'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingPanAdhar">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapsePanAdhar" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapsePanAdhar">
+                                            Pan Adhar
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapsePanAdhar" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingPanAdhar">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="pan_aadhar_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['22'].error">
+                                                            {{apiDetails['22'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Name<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="name" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6" formGroupName="clientData">
+                                                        <p class="mb-0">Case ID<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="caseId" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Adhar<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="aadhaar" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6" >
+                                                        <p class="mb-0">Pan<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="pan" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Month Year Of Birth<span class="float-end">(required)</span></p>
+                                                        <input type="date" formControlName="monthYearOfBirth" class="form-control"/>
+                                                    </div>
+                                                    <!-- <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_pan_adhar" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_aadhar_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_pan_adhar">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div> -->
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['25'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingPanProfile">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapsePanProfile" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapsePanProfile">
+                                            Pan Profile
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapsePanProfile" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingPanProfile">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="pan_profile_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['25'].error">
+                                                            {{apiDetails['25'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Pan Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="pan" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Last 4 digits of the Aadhaar No</p>
+                                                        <input type="input" formControlName="aadhaarLastFour" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Date of Birth</p>
+                                                        <input type="date" formControlName="dob" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Name</p>
+                                                        <input type="text" formControlName="name" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Address</p>
+                                                        <input type="text" formControlName="address" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Get Contact Details</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="getContactDetails" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'getContactDetails')">
+                                                                    <div class="knobs">
+                                                                        <label for="getContactDetails">Yes</label> 
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Pan Status</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="PANStatus" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'PANStatus')">
+                                                                    <div class="knobs">
+                                                                        <label for="PANStatus">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Is Salaried</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="isSalaried" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'isSalaried')">
+                                                                    <div class="knobs">
+                                                                        <label for="isSalaried">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Is Director</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="isDirector" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'isDirector')">
+                                                                    <div class="knobs">
+                                                                        <label for="isDirector">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6 ">
+                                                        <p class="mb-0">Is Sole proprietor</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="isSoleProp" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'isSoleProp')">
+                                                                    <div class="knobs">
+                                                                        <label for="isSoleProp">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_pan_profile" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'pan_profile_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_pan_profile">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['6'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingFDA">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseFDA" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseFDA">
+                                            FDA
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseFDA" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingFDA">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="fda_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['6'].error">
+                                                            {{apiDetails['6'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Licence Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="licence_no" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">State<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="state" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_fda" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'fda_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_fda">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['7'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingFSSAI">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseFSSAI" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseFSSAI">
+                                            FSSAI
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseFSSAI" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingFSSAI">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="fssai_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['7'].error">
+                                                            {{apiDetails['7'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Registration Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="reg_no" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_fssai" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'fssai_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_fssai">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['8'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingHSN">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseHSN" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseHSN">
+                                            HSN
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseHSN" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingHSN">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="hsn_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['8'].error">
+                                                            {{apiDetails['8'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">HS Code<span class="float-end">required</span></p>
+                                                        <input type="input" formControlName="hsCode" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_hsn" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'hsn_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_hsn">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['9'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingshopandestablisment">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseshopandestablisment" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseshopandestablisment">
+                                            Shop and Establisment
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseshopandestablisment" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingshopandestablisment">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="shop_establishment_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['9'].error">
+                                                            {{apiDetails['9'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Registration Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="regNo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Area Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="areaCode" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['10'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingca">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseca" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseca">
+                                            CA
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseca" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingca">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="ca_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['10'].error">
+                                                            {{apiDetails['10'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Membership Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="membership_no" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['11'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingICSI">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseICSI" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseICSI">
+                                            ICSI
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseICSI" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingICSI">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="icsi_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['11'].error">
+                                                            {{apiDetails['11'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Membership Number<span></span></p>
+                                                        <input type="input" formControlName="membershipNo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">CP Number<span></span></p>
+                                                        <input type="input" formControlName="cpNo" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['12'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingICWAI">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseICWAI" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseICWAI">
+                                            ICWAI
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseICWAI" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingICWAI">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="icwai_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['12'].error">
+                                                            {{apiDetails['12'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Membership Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="membership_no" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['13'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingMCI">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseMCI" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseMCI">
+                                            MCI
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseMCI" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingMCI">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="mci_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['13'].error">
+                                                            {{apiDetails['13'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Registration Number<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="registration_no" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Year Of Registration<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="year_of_reg" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <!-- <div class="col-6">
+                                                        <p class="mb-0">Medical Council<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="medical_council" class="form-control"/>
+                                                    </div> -->
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Medical Council<span class="float-end">(required)</span></p>
+                                                        <select class="form-select" formControlName="medical_council" aria-label="Default select example">
+                                                            <option *ngFor="let name of medical_council_names" value="{{name}}" >{{name}}</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['14'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingUDIN">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseUDIN" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseUDIN">
+                                            UDIN
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseUDIN" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingUDIN">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="udin_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['14'].error">
+                                                            {{apiDetails['14'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">UDIN<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="udin" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Mobile<span class="float-end">(required)</span></p>
+                                                        <input type="input" formControlName="mobile" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Need Karza</p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="needkarza_udin" value="true" class="checkbox" (change)="updateCheckBoxValue($event, 'udin_form', 'needkarza')">
+                                                                    <div class="knobs">
+                                                                        <label for="needkarza_udin">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['15'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingEmployment">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseEmployment" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseEmployment">
+                                            Employment Fetch
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseEmployment" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingEmployment">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="employment_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['15'].error">
+                                                            {{apiDetails['15'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Employer Name<span></span></p>
+                                                        <input type="input" formControlName="employerName" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Employee Name<span></span></p>
+                                                        <input type="input" formControlName="employeeName" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Mobile<span></span></p>
+                                                        <input type="input" formControlName="mobile" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Email Id<span></span></p>
+                                                        <input type="input" formControlName="emailId" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">CIF<span></span></p>
+                                                        <input type="input" formControlName="cif" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">PDF<span></span></p>
+                                                        <input type="input" formControlName="pdf" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['16'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingGoogle">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseGoogle" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseGoogle">
+                                            Google Check
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseGoogle" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingGoogle">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="google_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['16'].error">
+                                                            {{apiDetails['16'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row align-items-center mb-4">
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Query<span></span></p>
+                                                        <input type="input" formControlName="query" class="form-control"/>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['17'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingFSA">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseFSA" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseFSA">
+                                            FSA
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseFSA" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingFSA">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="fsa_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['17'].error">
+                                                            {{apiDetails['17'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4" formGroupName="fsaMetaData">
+                                                        <p class="mb-0">Loan Type<span></span></p>
+                                                        <input type="input" formControlName="loanType" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="fsaMetaData">
+                                                        <p class="mb-0">Loan Duration<span></span></p>
+                                                        <select class="form-select" formControlName="loanDuration" aria-label="Default select example">
+                                                            <option *ngFor="let mon of months" value="{{mon}}">{{mon}}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="fsaMetaData">
+                                                        <p class="mb-0">Loan Amount<span></span></p>
+                                                        <input type="input" formControlName="loanAmount" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="fsaMetaData">
+                                                        <p class="mb-0">Uploading Scanned Statements<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox1" formControlName="uploadingScannedStatements" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox1">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Year <span class="float-end">(Required)</span></p>
+                                                        <select class="form-select" (change)="fsa_year_select($event)" formControlName="fsa_year" aria-label="Default select example">
+                                                            <option selected value="2022">2022</option>
+                                                            <option value="2021">2021</option>
+                                                            <option value="2020">2020</option>
+                                                            <option value="2019">2019</option>
+                                                            <option value="2018">2018</option>
+                                                            <option value="2017">2017</option>
+                                                            <option value="2016">2016</option>
+                                                            <option value="2015">2015</option>
+                                                            <option value="2014">2014</option>
+                                                            <option value="2013">2013</option>
+                                                            <option value="2012">2012</option>
+                                                            <option value="2011">2011</option>
+                                                            <option value="2010">2010</option>
+                                                            <option value="2009">2009</option>
+                                                            <option value="2008">2008</option>
+                                                            <option value="2007">2007</option>
+                                                            <option value="2006">2006</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">files <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="fsa_files" hidden (change)="onFileChange($event, 'fsa_form')" />
+                                                        <label for="fsa_files" class="text-center"><img src="./assets/images/icons/Icon ionic-ios-cloud-upload.svg"> Click to Select File</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-5">
+                                                    <div class="col">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Financial Year	</th>
+                                                                    <th scope="col">File Name</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let file of fsa_files;let i = index">
+                                                                    <td>{{file.financialYear}}</td>
+                                                                    <td>{{file.fileName}}</td>
+                                                                    <td><img src="./assets/images/icons/Icon ionic-ios-close.svg" (click)="deleteFile('fsa',i)"></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['18'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingGST">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseGST" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseGST">
+                                            GST
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseGST" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingGST">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="gst_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['18'].error">
+                                                            {{apiDetails['18'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">GST IN<span></span></p>
+                                                        <input type="input" formControlName="gstIn" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Extended Period<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox1" formControlName="extendedPeriod" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox1">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">files <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="gst_file" hidden multiple (change)="onFileChange($event, 'gst_form')" />
+                                                        <label for="gst_file" class="text-center"><img src="./assets/images/icons/Icon ionic-ios-cloud-upload.svg"> Click to Select File</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-5">
+                                                    <div class="col">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">File Name</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let file of gst_files;let i = index">
+                                                                    <td>{{file.fileName}}</td>
+                                                                    <td><img src="./assets/images/icons/Icon ionic-ios-close.svg" (click)="deleteFile('gst', i)"></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['19'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingBSA">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseBSA" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseBSA">
+                                            BSA
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseBSA" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingBSA">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="bsa_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['19'].error">
+                                                            {{apiDetails['19'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Loan Type<span></span></p>
+                                                        <input type="input" formControlName="loanType" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Loan Duration<span></span></p>
+                                                        <select class="form-select" formControlName="loanDuration" aria-label="Default select example">
+                                                            <option *ngFor="let mon of months" value="{{mon}}" >{{mon}}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Loan Amount<span></span></p>
+                                                        <input type="input" formControlName="loanAmount" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Employment Type<span></span></p>
+                                                        <select class="form-select" formControlName="employmentType" aria-label="Default select example">
+                                                            <option selected value="Salaried">SALARIED</option>
+                                                            <option selected value="SelfEmployed">SELF EMPLOYED</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Year Month From<span></span></p>
+                                                        <input type="month" formControlName="yearMonthFrom" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Year Month To<span></span></p>
+                                                        <input type="month" formControlName="yearMonthTo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Processing Type<span></span></p>
+                                                        <select class="form-select" formControlName="processingType" aria-label="Default select example">
+                                                            <option selected value="STATEMENT">STATEMENT</option>
+                                                            <option selected value="SALARY_SLIP">SALARY_SLIP</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">files <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="bsa_file" hidden multiple (change)="onFileChange($event, 'bsa_form')" />
+                                                        <label for="bsa_file" class="text-center"><img src="./assets/images/icons/Icon ionic-ios-cloud-upload.svg"> Click to Select File</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-5">
+                                                    <div class="col">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">File Name</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let file of bsa_files;let i = index">
+                                                                    <td>{{file.fileName}}</td>
+                                                                    <td><img src="./assets/images/icons/Icon ionic-ios-close.svg" (click)="deleteFile('bsa', i)"></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['21'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingITR">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseITR" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseITR">
+                                            ITR
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseITR" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingITR">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="itr_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['21'].error">
+                                                            {{apiDetails['21'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">pan<span></span></p>
+                                                        <input type="input" formControlName="pan" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Redirection Url<span></span></p>
+                                                        <input type="input" formControlName="redirectionUrl" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Scanned<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox1" formControlName="scanned" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox1">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6  mb-4" formGroupName="data">
+                                                        <p class="mb-0">Is Widget<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox1" formControlName="isWidget" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox1">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">Document Type <span class="float-end">(Required)</span></p>
+                                                        <select class="form-select" (change)="document_type_select($event)" formControlName="itr_document_type" aria-label="Default select example">
+                                                            <option selected value="SCANNED_ITRV">SCANNED_ITRV</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6">
+                                                        <p class="mb-0">files <span class="float-end">(Required)</span></p>
+                                                        <input type="file" id="itr_files" hidden (change)="onFileChange($event, 'itr_form')" />
+                                                        <label for="itr_files" class="text-center"><img src="./assets/images/icons/Icon ionic-ios-cloud-upload.svg"> Click to Select File</label>
+                                                    </div>
+                                                </div>
+                                                <div class="row mt-5">
+                                                    <div class="col">
+                                                        <table class="table">
+                                                            <thead>
+                                                                <tr>
+                                                                    <th scope="col">Financial Year	</th>
+                                                                    <th scope="col">File Name</th>
+                                                                    <th scope="col">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody>
+                                                                <tr *ngFor="let file of itr_files;let i = index">
+                                                                    <td>{{file.documentType}}</td>
+                                                                    <td>{{file.fileName}}</td>
+                                                                    <td><img src="./assets/images/icons/Icon ionic-ios-close.svg" (click)="deleteFile('itr',i)"></td>
+                                                                </tr>
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row mb-4" *ngIf="apiDetails['27'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingGSTCREDLINK">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseGSTCREDLINK" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseGSTCREDLINK">
+                                            GST CREDLINK
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseGSTCREDLINK" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingGSTCREDLINK">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="gst_credlink_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['27'].error">
+                                                            {{apiDetails['27'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Mobile<span></span></p>
+                                                        <input type="input" formControlName="mobile" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Email<span></span></p>
+                                                        <input type="input" formControlName="email" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">GSTIN<span></span></p>
+                                                        <input type="input" formControlName="gstin" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Customer Name<span></span></p>
+                                                        <input type="input" formControlName="customerName" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Business Name<span></span></p>
+                                                        <input type="input" formControlName="businessName" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Employment Type<span></span></p>
+                                                        <select class="form-select" formControlName="inclusiveReports" aria-label="Default select example">
+                                                            <option selected value="GST">GST</option>
+                                                            <option selected value="MCA">MCA</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Extended Period<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox1" formControlName="extendedPeriod" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox1">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Simulate Enable<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox2" formControlName="simulateEnable" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox2">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">GST Cert Flag<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox3" formControlName="gstCertFlag" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox3">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Consent<span></span></p>
+                                                        <div class="toggle-button-cover">
+                                                            <div class="button-cover">
+                                                                <div class=" b2" id="button-10">
+                                                                    <input type="checkbox" id="chbox3" formControlName="consent" class="checkbox">
+                                                                    <div class="knobs">
+                                                                        <label for="chbox3">Yes</label>
+                                                                    </div>
+                                                                    <div class="layer"></div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4" *ngIf="apiDetails['26'].checked">
+                        <div class="col-12">
+                            <div class="accordion" id="accordionPanelsStayOpen" >
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="panelsStayOpen-headingBSAONLINE">
+                                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                            data-bs-target="#panelsStayOpen-collapseBSAONLINE" aria-expanded="false"
+                                            aria-controls="panelsStayOpen-collapseBSAONLINE">
+                                            BSA ONLINE
+                                            <img class="float-end arrow" src="./assets/images/icons/Icon ionic-ios-arrow-dropright-circle.svg">
+                                        </button>
+                                    </h2>
+                                    <div id="panelsStayOpen-collapseBSAONLINE" class="accordion-collapse collapse "
+                                        aria-labelledby="panelsStayOpen-headingBSAONLINE">
+                                        <div class="accordion-body file-upload">
+                                            <form [formGroup]="bsa_online_form">
+                                                <div class="row">
+                                                    <div class="col">
+                                                        <div class="alert alert-danger" role="alert" *ngIf="apiDetails['26'].error">
+                                                            {{apiDetails['26'].error_message}}
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row row-cols-2 align-items-center">
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Loan Type<span></span></p>
+                                                        <input type="input" formControlName="loanType" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Employment Type<span></span></p>
+                                                        <select class="form-select" formControlName="employmentType" aria-label="Default select example">
+                                                            <option selected value="Salaried">SALARIED</option>
+                                                            <option selected value="SelfEmployed">SELF EMPLOYED</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Destination<span></span></p>
+                                                        <select class="form-select" formControlName="destination" aria-label="Default select example">
+                                                            <option value="netbankingFetch">Netbanking Fetch</option>
+                                                            <option value="statement">Statement</option>
+                                                            <option value="choice">Choice</option>
+                                                            <option value="choice-all">Choice All</option>
+                                                            <option value="nbf-all">NBF All</option>
+                                                            <option value="statement-all">Statement All</option>
+                                                            <option value="accountAggregator">Account Aggregator</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Loan Duration<span></span></p>
+                                                        <select class="form-select" formControlName="loanDuration" aria-label="Default select example">
+                                                            <option *ngFor="let mon of months" value="{{mon}}" >{{mon}}</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Loan Amount<span></span></p>
+                                                        <input type="input" formControlName="loanAmount" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">Acceptance Policy<span></span></p>
+                                                        <select class="form-select" formControlName="acceptancePolicy" aria-label="Default select example">
+                                                            <option value="atLeastOneTransactionInRange">At Least One Transaction In Range</option>
+                                                            <option value="atLeastOneTransactionInStartAndEndMonths">At Least One Transaction In Start And End Months</option>
+                                                            <option value="atLeastOneTransactionPerMonthInRange">At Least One Transaction Per Month In Range</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Year Month From<span></span></p>
+                                                        <input type="month" formControlName="yearMonthFrom" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4">
+                                                        <p class="mb-0">Year Month To<span></span></p>
+                                                        <input type="month" formControlName="yearMonthTo" class="form-control"/>
+                                                    </div>
+                                                    <div class="col-6  mb-4" >
+                                                        <p class="mb-0">facility<span></span></p>
+                                                        <select class="form-select" formControlName="facility" aria-label="Default select example">
+                                                            <option value="NONE">NONE</option>
+                                                            <option value="OD">OD</option>
+                                                            <option value="CC">CC</option>
+                                                        </select>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="backdrop" [ngClass]="{'d-none': !loader}" #backdrop>
+    <div class="div-center loading">
+        <div class="spinner-border" role="status" style="width: 5rem; height: 5rem;">
+            <span class="sr-only"></span>
+        </div>
+    </div>
+</div>
+
+
+<div id="backdrop" [ngClass]="{'d-none': !apimessage}" #backdrop>
+    <div class="div-center">
+        <div class="api-message">
+            <h4>Form Submit Status</h4>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th scope="col">Form Name</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Message</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr *ngFor="let status of apiStatus">
+                        <td>{{status.form}}</td>
+                        <td>{{status.status}}</td>
+                        <td>{{status.message}}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div >
+                <button class="btn btn-primary float-end" (click)="closePupup()">Ok</button>
+            </div>
+            <div class="clearfix"></div>
+        </div>
+    </div>
+</div>
+

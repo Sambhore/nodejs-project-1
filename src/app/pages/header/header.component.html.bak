@@ -1,0 +1,110 @@
+<nav class="navbar p-0" *ngIf="pageName == 'viewPage'">
+    <div class="d-flex flex-row justify-content-between w-100">
+        <div class="row">
+            <div class="col text-center">
+                <img src="./assets/images/icons/logo1.png" class="logo"><br>
+                <p class="worksans-bold mt-3">LAN: {{lan}}</p>
+        </div>
+        </div>
+        <!-- <div class="text-center lan">
+            <span class="worksans-bold">API Call Screen: {{lan}}</span>
+        </div> -->
+        <div class="text-center lan" style="font-size: 16px;">
+            <a routerLink="/dashboard" ><span class="worksans-regular">View Dashboard</span></a>
+        </div>
+    </div>
+</nav>
+<nav class="navbar p-0 d-flex fixed-top" *ngIf="pageName == 'dashboardPage'">
+    <div class="d-flex flex-row justify-content-between w-100">
+        <div class="row">
+            <div class="col text-center">
+                <img src="./assets/images/icons/logo1.png" class="logo"><br>
+                <p class="worksans-bold mt-3">LAN: {{lan}}</p>
+            </div>
+        </div>
+        <div class="hstack">
+            <div class="fileNotification-wrapper">
+                <button class="btn" (mouseover)="fileNotification=true" (mouseout)="fileNotification=false" ><img src="./assets/images/icons/Layer%205-1.svg"></button>
+                <div class="fileNotification" *ngIf="fileNotification">
+                    <h2>Uploaded Files</h2>
+                    <div class="wrapper">
+                        <h4>FSA</h4>
+                        <div class="notification">
+                            <p><b>Adhar Card</b> adharcard.pdf <img src=""></p>
+                            <p>13/10/22 14:50</p>
+                        </div>
+                        <div class="notification">
+                            <p><b>Adhar Card</b> adharcard.pdf <img src=""></p>
+                            <p>13/10/22 14:50</p>
+                        </div>
+                        <div class="notification">
+                            <p><b>Adhar Card</b> adharcard.pdf <img src=""></p>
+                            <p>13/10/22 14:50</p>
+                        </div>
+                        <div class="notification">
+                            <p><b>Adhar Card</b> adharcard.pdf <img src=""></p>
+                            <p>13/10/22 14:50</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="logNotification-wrapper">
+                <button class="btn" (mouseover)="logNotification=true" (mouseout)="logNotification=false" ><img src="./assets/images/icons/Path%20354.svg"></button>
+                <div class="logNotification" *ngIf="logNotification">
+                    <h2>Triggered Logs</h2>
+                    <div class="wrapper">
+                        <div class="notification hstack"  *ngFor="let log of allLogs">
+                            <div class="badge-wrapper">
+                                <span class="badge rounded-pill text-bg-{{log.status}}">{{log.status | titlecase}}</span>
+                                <div class="d-flex vr-line">
+                                    <div class="vr"></div>
+                                </div>
+                            </div>
+                            <div class="ml-10">
+                                <p>User Requested <b>{{log.service}}</b></p>
+                                <p> {{log.start_time | date: 'dd/MM/yyyy hh:mm'}}</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <p style="margin-left:20px;">view all logs</p>
+                    </div>
+                </div>
+            </div>
+            <div *ngIf="!userReadOnlyAccess">
+                <div class="row">
+                    <div class="col text-center d-flex align-items-center menu-icons">
+                        <a class="align-middle" routerLink="/trigger-services">
+                            <img class="svgimg active" src="./assets/images/header/trigger-apis.svg"><br>
+                            <span>Trigger<br>APIs</span>
+                        </a>
+                    </div>
+                    <div class="col text-center d-flex align-items-center menu-icons">
+                        <button class="align-middle icon-btn" [ngClass]="!disableSaveDashboard ? 'active' : ''" [disabled]="disableSaveDashboard" (click)="saveDashboard()">
+                            <img src="./assets/images/header/save.svg" class="svgimg" [ngClass]="!disableSaveDashboard ? 'active' : ''" ><br>
+                            <span>Save<br>Dashboard</span>
+                        </button>
+                    </div>
+                    <div class="col text-center d-flex align-items-center menu-icons">
+                        <button class="align-middle icon-btn" [ngClass]="!disableSavePDF ? 'active' : ''" [disabled]="disableSavePDF" (click)="generatePdf()">
+                            <img src="./assets/images/header/generate-pdf.svg" class="svgimg" [ngClass]="!disableSavePDF ? 'active' : ''" ><br>
+                            <span>Generate<br>PDF</span>
+                        </button>
+                    </div>
+                    <div class="col text-center d-flex align-items-center menu-icons">
+                        <button class="align-middle icon-btn active" (click)="submitEligibility()">
+                            <img src="./assets/images/header/check-eligibility.svg" class="svgimg active"><br>
+                            <span>Check<br>Eligibility</span>
+                        </button>
+                    </div>
+                </div>
+                <!-- <button class="btn btn-primary me-2 header-button" [disabled]="disableSaveDashboard" (click)="saveDashboard()">Save Dashboard</button>
+                <button class="btn btn-primary me-2 header-button" [disabled]="disableSavePDF" (click)="generatePdf()">Generate PDF</button>
+                <button class="btn btn-primary me-2 header-button" (click)="submitEligibility()">Check Eligibility</button> -->
+            </div>
+        </div>
+    </div>
+</nav>
+
+
+

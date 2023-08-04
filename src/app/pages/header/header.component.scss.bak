@@ -1,0 +1,102 @@
+.navbar{
+  background:#FAFAFA;
+  height:120px;
+}
+
+.logo{
+    width:250px;
+}
+
+// .text-center{
+//     padding:25px;
+//     font-size: 24px;
+//     color:#111111;
+// }
+.text-center.lan{
+  padding:25px;
+  font-size: 24px;
+  color:#111111;
+}
+.menu-icons a{
+color:#9FC356;
+text-decoration:none
+}
+.menu-icons button{
+color:#6c757d;
+border:none;
+background:none;
+}
+.menu-icons button.active{
+color:#9FC356;
+}
+.svgimg{
+height: 25px;
+filter: invert(48%) sepia(9%) saturate(434%) hue-rotate(167deg) brightness(92%) contrast(90%);
+}
+.svgimg.active{
+filter: invert(82%) sepia(10%) saturate(2047%) hue-rotate(34deg) brightness(88%) contrast(90%);
+}
+.worksans-bold{
+  font-family: WorkSansBold;
+}
+
+.worksans-regular{
+  font-family: WorkSansRegular;
+}
+
+.fileNotification-wrapper, .logNotification-wrapper{
+  position: relative;
+}
+.fileNotification, .logNotification{
+  position: absolute;
+  width: 200px;
+  background: #fff;
+  border: 1px solid #c7c7c7;
+  border-radius: 5px;
+  padding: 10px;
+  right: 0px;
+  max-height: 500px;
+}
+.logNotification{
+    width:300px
+}
+.fileNotification h2, .logNotification-wrapper h2{ 
+  font-size: 16px;
+  font-weight: bold;
+}
+.fileNotification h4{ 
+  font-size: 14px;
+  font-weight: bold;
+}
+.fileNotification p, .logNotification p{ 
+  font-size: 12px;
+  margin: 0px;
+  color:#555555;
+}
+.fileNotification .notification{
+  margin-bottom: 5px;
+}
+.ml-10{
+  margin-left:10px;
+}
+.badge{
+  min-width:65px;
+}
+.logNotification .notification{
+  padding-bottom: 10px;
+  position: relative;
+}
+.vr-line{
+  position: absolute;
+  height: 26px;
+  left: 10px;
+  top: 29px;
+}
+.header-button{
+  font-size: 12px;
+}
+
+.btn-primary:disabled{
+  background-color: #555;
+  color:#fff;
+}

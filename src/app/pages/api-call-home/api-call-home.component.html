@@ -1,0 +1,234 @@
+<div class="app-container">
+    <div class="d-flex w-100 padding">
+        <mat-accordion class="w-100 example-headers-align" multi>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title style="font-weight: bold;" class="text-style">
+                        Applicants:{{config.applicant.length}}
+                    </mat-panel-title>
+                    <mat-panel-description>
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div style="overflow-x:auto;overflow-y: hidden;">
+                    <div style="gap:1%" class="d-flex">
+                        <div (click)="activeCard(i)" *ngFor="let data of config.applicant; let i = index"
+                            [ngClass]="{'background-green':config.index==i}" style="cursor:pointer"
+                            class="card-style mb-3">
+                            <div style="gap: 10px;" class="d-flex flex-column p-4">
+                                <div class="d-flex justify-content-between">
+                                    <div style="font-weight:bold;">
+                                        Applicant {{i+1}}
+                                    </div>
+                                    <div class="d-flex">
+                                    </div>
+                                </div>
+                                <div *ngFor="let field of data.fields" class="d-flex w-100 justify-content-between">
+                                    <div>
+                                        {{field.label}}
+                                    </div>
+                                    <div class="d-flex">
+                                        <div style="font-weight:bold;">
+                                            {{field.value}}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+    <div class="d-flex w-100 padding">
+        <mat-accordion class="w-100 example-headers-align" multi>
+            <mat-expansion-panel>
+                <mat-expansion-panel-header>
+                    <mat-panel-title style="font-weight: bold;" class="text-style">
+                        Triggered Services
+                    </mat-panel-title>
+                    <mat-panel-description>
+
+                    </mat-panel-description>
+                </mat-expansion-panel-header>
+                <div class="row mt-2">
+                    <div *ngFor="let triggerData of finalTriggerData; let i = index"
+                        [ngClass]="{'border-right': i != 5}" class="col-2 px-4">
+                        <div class="mb-5">
+                            <span class="trigger-title">{{triggerData.key}}</span>
+                            <div class="col-12 mt-3">
+                                <div *ngFor="let data of triggerData.values" class="row mt-2">
+                                    <div class="col-8">
+                                        <span [ngClass]="{'disable-clr':data.disable==true}"
+                                            class="trigger-subtext disable-clr">{{data.service}}</span>
+                                    </div>
+                                    <div [ngClass]="{'pending':data.status.toLowerCase()=='pending'}"
+                                        *ngIf="data.status != ''" class="col-4 status-bg">
+                                        <div>{{data.status}}</div>
+                                    </div>
+                                    <div class="col-6 date-style">
+                                        {{data.date}}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </mat-expansion-panel>
+        </mat-accordion>
+    </div>
+    <div class="d-flex w-100 padding" style="gap:30px;">
+        <mat-card class="w-50">
+            <div class="text-style worksans-bold mb-2">Services Available</div>
+            <div class="col-12">
+                <div class="row mb-2">
+                    <div class="col-10">
+                        <span>
+                            Please select all the API checks required for this case from below list
+                        </span>
+                    </div>
+                    <div style="text-align: right;" class="col-2">
+                        Expand All
+                    </div>
+                </div>
+                <div class="row">
+                    <div *ngFor="let triggerData of finalTriggerData; let i = index" class="col-6 mt-4">
+                        <mat-accordion class="col-6 example-headers-align" multi>
+                            <mat-expansion-panel>
+                                <mat-expansion-panel-header>
+                                    <mat-panel-title style="font-weight: bold;" class="worksans-bold text-style1">
+                                        {{triggerData.key}}
+                                    </mat-panel-title>
+                                    <mat-panel-description>
+                                    </mat-panel-description>
+                                </mat-expansion-panel-header>
+                                <div *ngFor="let data of triggerData.values" class="row">
+                                    <mat-checkbox [checked]="!data.disable" class="worksans-regular text-style1"
+                                        (change)="checkboxEvent(data.service,$event)">
+                                        {{data.service}}
+                                    </mat-checkbox>
+                                </div>
+                            </mat-expansion-panel>
+                        </mat-accordion>
+                    </div>
+                </div>
+            </div>
+
+        </mat-card>
+        <mat-card class="w-50">
+            <form [formGroup]="config.formFields">
+                <div class="text-style worksans-bold mb-2">Submit Documents</div>
+                <div class="col-12">
+                    <div class="row mb-2">
+                        <div class="col-9">
+                            <span>
+                                Please add all required fields below to process services,
+                            </span>
+                        </div>
+                        <div style="text-align: right;" class="col-3">
+                            <button [ngClass]="{'disable-label':config.formFields.invalid }"
+                                class="worksans-bold submit-btn" mat-raised-button>Submit for API</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 mt-3">
+                    <div class="submit-details w-100 mb-3">
+                        <div class="col-12 p-4">
+                            <div class="row">
+                                <span style="font-size:20px" class="worksans-bold">FSA</span>
+                                <div class="col-6 mt-2 mb-2">
+                                    <div class="form-group">
+                                        <label style="color:#111111;font-size: 16px;" for="loanAmount"
+                                            class="worksans-regular">Loan Amount</label>
+                                        <input (keypress)="allowNumbers($event)" style="color:#555555;font-size: 14px;"
+                                            type="text" formControlName="loanAmount"
+                                            class="form-control worksans-regular" aria-describedby="loan amount"
+                                            placeholder="Enter Loan Amount">
+                                    </div>
+                                </div>
+                                <div class="col-6 mt-2 mb-2">
+                                    <div class="form-group">
+                                        <label style="color:#111111;font-size: 16px;" for="loanduration"
+                                            class="worksans-regular">Loan Duration</label>
+                                        <input (keypress)="allowNumbers($event)" style="color:#555555;font-size: 14px;"
+                                            type="text" formControlName="loanDuration"
+                                            class="form-control worksans-regular" aria-describedby="loan amount"
+                                            placeholder="Enter Loan Duration">
+                                    </div>
+                                </div>
+                                <div class="col-6 mt-2 mb-2">
+                                    <div class="form-group">
+                                        <label style="color:#111111;font-size: 16px;" for="loanType"
+                                            class="worksans-regular">Loan Type</label>
+                                        <input (keypress)="allowCharacters($event)"
+                                            style="color:#555555;font-size: 14px;" type="text"
+                                            formControlName="loanType" class="form-control worksans-regular"
+                                            aria-describedby="loan amount" placeholder="Enter Loan Type">
+                                    </div>
+                                </div>
+                                <div class="col-6 mt-2 mb-2">
+                                    <div class="form-group mt-4">
+                                        <label style="color:#111111;font-size: 16px;" class="worksans-regular"></label>
+                                        <mat-checkbox formControlName="scannedStatement"
+                                            class="worksans-regular text-style1">
+                                            Scanned Statement
+                                        </mat-checkbox>
+                                    </div>
+                                </div>
+                                <div style="gap:10px;" class="d-flex">
+                                    <label style="color:#111111;font-size: 16px;" for="exampleInputEmail1"
+                                        class="worksans-regular mb-2">Add Documents</label>
+                                </div>
+                                <div style="gap:10px" class="d-flex mt-1 justify-content-between">
+                                    <div class="form-group w-100">
+                                        <mat-form-field class="example-full-width w-100" appearance="outline">
+                                            <mat-label>Financial Year</mat-label>
+                                            <mat-select formControlName="financialYear"
+                                                [disabled]="selectedFileName.length==3" [(ngModel)]="config.finYear"
+                                                name="year">
+                                                <mat-option *ngFor="let data of config.financialYear"
+                                                    [value]="data.year">
+                                                    {{data.year}}
+                                                </mat-option>
+                                            </mat-select>
+                                        </mat-form-field>
+                                    </div>
+                                    <div class="form-group mt-1">
+                                        <div>
+                                            <input hidden (change)="selectFile($event)" #fileInput1 type="file"
+                                                id="fileInput1" />
+                                            <label class="file-input" [ngClass]="{'disable-label':config.finYear == ''}"
+                                                for="fileInput1"><a>
+                                                    <div class="d-flex w-100 justify-content-center py-3">
+                                                        Click to Select File
+                                                    </div>
+                                                </a>
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div *ngIf="selectedFileName.length > 0" class="col-12 p-4">
+                                    <table class="table table-striped">
+                                        <thead>
+                                            <tr>
+                                                <th scope="col">Financial Year</th>
+                                                <th scope="col">File Name</th>
+                                                <th scope="col">Action</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let fileData of selectedFileName; let i = index">
+                                                <td>{{fileData.finYear}}</td>
+                                                <td>{{fileData.file.name}}</td>
+                                                <td><button (click)="deleteFile(i)">delete</button></td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </mat-card>
+    </div>
+</div>

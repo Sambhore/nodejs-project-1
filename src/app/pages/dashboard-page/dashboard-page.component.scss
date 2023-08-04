@@ -1,0 +1,40 @@
+.myTable {
+    border: none;
+    border-right: solid 1px #DDEFEF;
+    border-collapse: separate;
+    border-spacing: 0;
+    }
+    .myTable thead th {
+    background-color: #EEE;
+    border: none;
+    color: black;
+    padding: 10px;
+    text-align: left;
+    text-shadow: 1px 1px 1px #fff;
+    white-space: nowrap;
+    }
+    .myTable tbody td {
+    border-bottom: solid 1px #EEE;
+    color: #333;
+    padding: 10px;
+    text-shadow: 1px 1px 1px #fff;
+    white-space: nowrap;
+    }
+    .my-wrapper {
+    position: relative;
+    }
+    .my-scroller {
+    margin-left: 51%;
+    overflow-x: scroll;
+    overflow-y: visible;
+    padding-bottom: 5px;
+    width: 50%;
+    }
+    .myTable .my-sticky-col {
+    border-left: solid 1px #EEE;
+    border-right: solid 1px #EEE;
+    left: 0;
+    position: absolute;
+    top: auto;
+    width: 5%;
+    }

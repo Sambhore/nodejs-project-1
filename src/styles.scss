@@ -1,0 +1,13 @@
+/* You can add global styles to this file, and also import other style files */
+@import "~bootstrap/dist/css/bootstrap.css";
+@font-face {
+    font-family:WorkSansBold;
+    src:url(./assets/Fonts/work-sans/WOFF2/WorkSans-Bold.woff2) format("woff2");
+}
+@font-face {
+    font-family:WorkSansRegular;
+    src:url(./assets/Fonts/work-sans/WOFF2/WorkSans-Regular.woff2) format("woff2");
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif,'Work Sans', sans-serif; }
+
