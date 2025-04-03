@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      nodejs: 18  # Change this to your Node.js version
+    commands:
+      - echo "Installing dependencies..."
+      - npm install
+
+  pre_build:
+    commands:
+      - echo "Running tests..."
+      - npm test  # Remove if no tests are available
+
+  build:
+    commands:
+      - echo "Building application..."
+      - npm run build  # Ensure you have a build script in package.json
+
+  post_build:
+    commands:
+      - echo "Build completed successfully!"
+
+artifacts:
+  files:
+    - '**/*'
+  base-directory: dist  # Adjust based on your build output folder
+  discard-paths: no
