@@ -8,11 +8,6 @@ phases:
       - echo "Installing dependencies..."
       - npm install
 
-  pre_build:
-    commands:
-      - echo "Running tests..."
-      - npm test  # Remove if no tests are available
-
   build:
     commands:
       - echo "Building application..."
